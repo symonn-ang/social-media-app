@@ -13,7 +13,7 @@ import Image from "next/image";
 
 export default function Sidebar() {
     return (
-        <nav className='h-screen hidden sm:flex flex-col sticky top-0 p-3 xl:ml-20'>
+        <nav className='h-screen hidden sm:flex flex-col sticky top-0 p-3 xl:ml-20 xl:mr-10'>
              <div className='relative h-full'> {/* to seperate side icon and user info */}
                 <div className='pl-[5.8]'>
                     <Image src={'/assets/logo.png'} width={48} height={48} alt='logo-pic' />

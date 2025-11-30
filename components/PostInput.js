@@ -21,7 +21,7 @@ export default function PostInput() {
                     placeholder="How's your day?"
                 />
 
-                <div className="flex justify-between">
+                <div className="flex justify-between pt-5">
                     <div className="flex space-x-1.5">
                         <PhotoIcon className="w-[22px] h-[22px] text-[#ff3377]"/>
                         <ChartBarIcon className="w-[22px] h-[22px] text-[#ff3377]"/>
