@@ -3,25 +3,15 @@
 import React, { useState } from "react";
 import { Modal } from '@mui/material'
 import { useDispatch, useSelector } from "react-redux";
-import { closeSignUpModal, openSignUpModal } from "@/redux/slices/modalSlice";
+import { closeLogInModal, openLogInModal } from "@/redux/slices/modalSlice";
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-export default function SignUpModal() {
-
-    // const [isOpen, setIsOpen] = useState(false)
-
-    // const handleClose = () => {
-    //     setIsOpen(false);
-    // }
-
-    // const handleOpen = () => {
-    //     setIsOpen(true);
-    // }
+export default function LogInModal() {
 
     const [showPassword, setShowPassword] = useState(false)
 
     const isOpen = useSelector(
-        (state) => state.modals.signUpModalOpen
+        (state) => state.modals.logInModalOpen
     );
     const dispatch = useDispatch()
 
@@ -29,18 +19,18 @@ export default function SignUpModal() {
 
     return (
         <>
-            <button className="w-full h-12 md:w-[88px] md:h-10 text-md md:text-sm font-bold bg-white
-                rounded-full cursor-pointer"
+            <button className="w-full h-12 md:w-[88px] md:h-10 text-md md:text-sm border-2 border-gray-100
+                rounded-full text-white font-bold hover:bg-white/25 transition cursor-pointer"
                 onClick={
-                    () => dispatch(openSignUpModal())
+                    () => dispatch(openLogInModal())
                 }
             >
-                Sign up
+                Log In
             </button>
 
             <Modal open={isOpen}
                 onClose={
-                    () => dispatch(closeSignUpModal())
+                    () => dispatch(closeLogInModal())
                 }
                 className="flex justify-center items-center"
             >
@@ -48,38 +38,32 @@ export default function SignUpModal() {
                 sm:rounded-xl
                 ">
                     <XMarkIcon className="w-7 mt-5 ms-5 cursor-pointer stroke-2"
-                    onClick={() => dispatch(closeSignUpModal())}
+                        onClick={() => dispatch(closeLogInModal())}
                     />
                     <form className="pt-10 pb-20 px-4 sm:px-20">
-                        <h1 className="text-3xl font-bold mb-10">Create your account</h1>
+                        <h1 className="text-3xl font-bold mb-10">Log in to ChillNet</h1>
                         <div className="w-full space-y-5 mb-10">
-                            <input className="w-full h-[54px] border-2 border-gray-400
-                            outline-none pl-3 rounded-sm focus:border-[#ff3377]
-                            transition
-                            "
-                            placeholder="Name" type="text" 
-                            />
 
                             <input className="w-full h-[54px] border-2 border-gray-400
                             outline-none pl-3 rounded-sm focus:border-[#ff3377]
                             transition
                             "
-                            placeholder="Email" type="email" 
+                                placeholder="Email" type="email"
                             />
                             <div className="w-full h-[54px] border-2 border-gray-400
                                 outline-none rounded-sm focus-within:border-[#ff3377]
                                 transition flex items-center overflow-hidden pr-3
                                 ">
 
-                                <input placeholder="Password" 
-                                type={showPassword ? "text": "password"}
-                                className="w-full h-full
+                                <input placeholder="Password"
+                                    type={showPassword ? "text" : "password"}
+                                    className="w-full h-full
                                 ps-3 outline-none
                                 " />
-                                <div 
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="w-7 h-7 text-gray-400 cursor-pointer">
-                                    {showPassword ? <EyeSlashIcon />: <EyeIcon />}
+                                <div
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="w-7 h-7 text-gray-400 cursor-pointer">
+                                    {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                                 </div>
 
                             </div>
@@ -89,7 +73,7 @@ export default function SignUpModal() {
                         <button className="bg-[#ff3377] text-white h-12 
                         rounded-full shadow-md mb-5 w-full cursor-pointer
                         ">
-                            Sign Up
+                            Log In
                         </button>
                         <span className="mb-5 text-sm text-center block">Or</span>
                         <button className="bg-[#ff3377] text-white h-12 
