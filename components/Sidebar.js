@@ -10,12 +10,19 @@ import {
 } from '@heroicons/react/24/outline'
 
 import Image from "next/image";
+import SideBarUserInfo from './SideBarUserInfo';
+
+
+
 
 export default function Sidebar() {
+
+
+
     return (
-        <nav className='h-screen hidden sm:flex flex-col sticky top-0 p-3 xl:ml-20 xl:mr-10'>
-             <div className='relative h-full'> {/* to seperate side icon and user info */}
-                <div className='pl-[5.8]'>
+        <nav className='h-screen hidden sm:flex flex-col sticky top-0 p-3 pl-0 xl:ml-20 xl:mr-10'>
+            <div className='relative h-full flex flex-col items-center'> {/* to seperate side icon and user info */}
+                <div className='pl-[5.8] mr-auto'>
                     <Image src={'/assets/logo.png'} width={48} height={48} alt='logo-pic' />
                 </div>
                 <ul>
@@ -31,9 +38,9 @@ export default function Sidebar() {
                         Button
                     </button>
                 </ul>
-                <div className='absolute bottom-0'>
-                    User Info
-                </div>
+
+                <SideBarUserInfo />
+                
             </div>
         </nav>
     )

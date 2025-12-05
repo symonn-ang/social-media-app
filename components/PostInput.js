@@ -13,7 +13,7 @@ import Image from "next/image";
 export default function PostInput() {
 
     return (
-        <div className="flex space-x-5 p-3">
+        <div className="flex space-x-5 p-3 border-b border-gray-200">
             <Image src="/assets/ic_profile.png" width={44} height={44} alt="prof-pic" className="w-11 h-11" />
 
             <div className="w-full">
@@ -21,7 +21,7 @@ export default function PostInput() {
                     placeholder="How's your day?"
                 />
 
-                <div className="flex justify-between pt-5">
+                <div className="flex justify-between pt-5 border-t border-gray-100">
                     <div className="flex space-x-1.5">
                         <PhotoIcon className="w-[22px] h-[22px] text-[#ff3377]"/>
                         <ChartBarIcon className="w-[22px] h-[22px] text-[#ff3377]"/>

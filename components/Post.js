@@ -12,7 +12,7 @@ import {
 export default function Post() {
 
     return (
-        <div>
+        <div className="border-b border-gray-200">
             <PostHeader />
 
             <div className="ml-16 p-3 flex space-x-14">
@@ -72,7 +72,7 @@ export function PostHeader() {
                     max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px]
                     sm:max-w-40
                     ">
-                        @guest0000234
+                        guest@gmail.com
                     </span>
                     <span>⋅</span>
                     <span>a day ago</span>
