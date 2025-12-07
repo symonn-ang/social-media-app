@@ -13,7 +13,7 @@ export default function SignUpPrompt() {
         !name &&
         <div className="fixed w-full h-20 bg-[#ff3377]
         bottom-0 flex justify-center items-center md:space-x-5
-        lg:justify-between lg:px-20 xl:px-40 2xl:px-115
+        lg:justify-between lg:px-20 xl:px-40 2xl:px-115 z-50
         ">
 
             <div className="hidden md:flex flex-col text-white">

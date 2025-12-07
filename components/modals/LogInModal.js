@@ -59,14 +59,17 @@ export default function LogInModal() {
         <>
             <button
                 className="w-full h-12 md:w-[88px] md:h-10 text-md md:text-sm border-2 border-gray-100 rounded-full text-white font-bold hover:bg-white/25 transition cursor-pointer"
-                onClick={() => dispatch({ type: "modal/openLogInModal" })} // or use your openLogInModal action
+                onClick={() => dispatch({ type: "modal/openLogInModal" })} // forgot 
             >
                 Log In
             </button>
 
             <Modal open={isOpen} onClose={() => dispatch(closeLogInModal())} className="flex justify-center items-center">
                 <div className="w-full h-full sm:w-[600px] sm:h-fit bg-white sm:rounded-xl relative">
-                    <XMarkIcon className="absolute top-5 left-5 w-8 cursor-pointer stroke-2" onClick={() => dispatch(closeLogInModal())} />
+                    <XMarkIcon 
+                    className="absolute top-5 left-5 w-8 cursor-pointer stroke-2" 
+                    onClick={() => dispatch(closeLogInModal())} 
+                    />
 
                     <div className="pt-20 pb-20 px-8 sm:px-20">
                         <h1 className="text-3xl font-bold mb-10">Log in to ChillNet</h1>

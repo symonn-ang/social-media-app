@@ -3,14 +3,17 @@
 import React, { useState } from 'react';
 import { PhotoIcon, ChartBarIcon, FaceSmileIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import Image from "next/image";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeCommentModal } from '@/redux/slices/modalSlice';
 
-export default function PostInput({ onPostSuccess }) {
+export default function PostInput({ onPostSuccess, insideModal }) {
   const [text, setText] = useState("")
   const [loading, setLoading] = useState(false)
 
   const user = useSelector((state) => state.user)  
   const isGuest = !user?.uid || user.email === "guest@example.com"
+  const commentDetails = useSelector((state) => state.modals.commentPostDetails)
+  const dispatch = useDispatch()
 
   async function sendPost() {
     if (!text.trim() || loading || isGuest) return
@@ -18,7 +21,7 @@ export default function PostInput({ onPostSuccess }) {
     setLoading(true)
 
     try {
-      const res = await fetch("/api/posts/create", {
+      const res = await fetch("/api/post/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,20 +48,55 @@ export default function PostInput({ onPostSuccess }) {
     }
   }
 
+async function sendComment() {
+  if (!text.trim() || loading || isGuest) return
+
+  setLoading(true)
+
+  try {
+    const res = await fetch(`/api/comments/${commentDetails.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user": JSON.stringify({         // so apparently the problem was here, fixed now for comments logic
+          id: user.uid,
+          name: user.name,
+          username: user.username
+        })
+      },
+      body: JSON.stringify({ text: text.trim() })
+    })
+
+    if (res.ok) {
+      setText('')
+      dispatch(closeCommentModal())
+      if (typeof onCommentSuccess === "function") onCommentSuccess() // refresh comments
+    } else {
+      alert("Failed to comment")
+    }
+  } catch (err) {
+    console.error(err)
+    alert("Network error")
+  } finally {
+    setLoading(false)
+  }
+}
+
+
   return (
     <div className="flex space-x-5 p-3 border-b border-gray-200">
       <Image
-        src={user?.avatar || "/assets/prof_pic.png"}
+        src={user?.avatar || insideModal ? "/assets/prof_pic.png" : "/assets/prof_pic.png"}
         width={44}
         height={44}
-        alt="profile"
-        className="w-11 h-11 rounded-full object-cover"
+        alt={insideModal ? "Profile Picture" : "Other"} // Check later
+        className="w-11 h-11 rounded-full object-cover z-10 bg-white"
       />
 
       <div className="w-full">
         <textarea
           className="resize-none outline-none w-full min-h-[50px] text-lg placeholder-gray-500"
-          placeholder="How's your day?"
+          placeholder={insideModal ? "Send your reply" : "How's your day?"}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -81,9 +119,9 @@ export default function PostInput({ onPostSuccess }) {
           <button
             className="bg-[#ff3377] text-white w-20 h-9 rounded-full text-sm font-medium cursor-pointer disabled:opacity-50 transition hover:bg-[#e02a6a]"
             disabled={!text.trim() || loading}
-            onClick={sendPost}
+            onClick={() => insideModal ? sendComment() : sendPost()}
           >
-            {loading ? "..." : "Post"}
+            {insideModal ? "Send" : "Post"}
           </button>
         </div>
         {isGuest && (

@@ -55,7 +55,7 @@ export default function PostFeed() {
           <p className="p-10 text-center text-gray-500">No posts yet. Be the first!</p>
         )}
         {posts.map((post) => (
-          <Post key={post.id} data={post} />
+          <Post key={post.id} data={post} id={post.id} />
         ))}
       </div>
     </div>

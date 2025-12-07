@@ -5,6 +5,7 @@ import Widgets from '@/components/Widgets';
 import SignUpPrompt from '@/components/SignUpPrompt';
 
 import Image from "next/image";
+import CommentModal from '@/components/modals/CommentModal';
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <Widgets />
       </div>
 
+      <CommentModal />
       <SignUpPrompt />
 
 

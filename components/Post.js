@@ -1,70 +1,116 @@
-// components/Post.js  (or wherever you have it)
+"use client" // for moment check later if not needed
+
 import React from "react";
 import Image from "next/image";
 import {
-  ChatBubbleOvalLeftEllipsisIcon,
-  HeartIcon,
-  ChartBarIcon,
-  ArrowUpTrayIcon
+    ChatBubbleOvalLeftEllipsisIcon,
+    HeartIcon,
+    ChartBarIcon,
+    ArrowUpTrayIcon
 } from '@heroicons/react/24/outline'
-import { timeAgo } from '@/utils/timeAgo'   // ← this is the file you just made
-import { useSelector } from "react-redux";
+import { timeAgo } from '@/utils/timeAgo'
+import { useDispatch, useSelector } from "react-redux";
+import { openCommentModal, setCommentDetails } from "@/redux/slices/modalSlice";
+import Link from "next/link";
 
 export default function Post({ data }) {
-  const { name, username, content, created_at, avatar } = data
-  const user = useSelector((state) => state.user)  
+    const dispatch = useDispatch()
 
-  return (
-    <div className="border-b border-gray-200 hover:bg-gray-50 transition">
-      <div className="flex p-3 space-x-3">
-        <Image 
-          src={user?.avatar || "/assets/prof_pic.png"} 
-          width={44} 
-          height={44} 
-          alt="user" 
-          className="w-11 h-11 rounded-full object-cover"
-        />
+    const { id, name, username, content, created_at, avatar } = data // access db, iz const so careful
 
-        <div className="flex-1">
-          <div className="flex items-center space-x-1 text-sm">
-            <span className="font-bold text-black truncate max-w-[120px] sm:max-w-none">
-              {name}
-            </span>
-            <span className="text-gray-500 truncate">@{username}</span>
-            <span className="text-gray-500"> · {timeAgo(created_at)}</span>
-          </div>
+    return (
+        <div className="border-b border-gray-200 hover:bg-gray-50 transition">
 
-          <p className="mt-2 text-[15px] leading-6">{content}</p>
+            <Link href={'/' + id}> 
+                <PostHeader
+                    name={name}
+                    username={username}
+                    timestamp={created_at}
+                    avatar={avatar}
+                    text={content}
 
-          <div className="flex justify-between mt-4 max-w-[424px]">
-            <button className="flex items-center space-x-2 text-gray-400 hover:text-[#33beff] transition group cursor-pointer">
-              <div className="p-2 rounded-full">
-                <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-              </div>
-              <span className="text-sm">0</span>
-            </button>
+                />
+            </Link>
 
-            <button className="flex items-center space-x-2 text-gray-400 hover:text-red-600 transition group cursor-pointer">
-              <div className="p-2 rounded-full">
-                <HeartIcon className="w-5 h-5" />
-              </div>
-              <span className="text-sm">0</span>
-            </button>
+            <div className="ml-16 p-3 flex space-x-14">
+                <div className="relative">
+                    <ChatBubbleOvalLeftEllipsisIcon
+                        className="w-[22px] h-[22px] cursor-pointer hover:text-[#33beff] transition"
+                        onClick={() => {
+                            dispatch(setCommentDetails({
+                                name: name,
+                                username: username,
+                                id: id,
+                                text: content,
+                            }))
+                            dispatch(openCommentModal())
 
-            <button className="flex items-center space-x-2 text-gray-400 cursor-not-allowed">
-              <div className="p-2 rounded-full">
-                <ChartBarIcon className="w-5 h-5" />
-              </div>
-            </button>
+                        }}
+                    />
+                    <span className="absolute text-xs top-1 -right-3">0</span>
+                </div>
 
-            <button className="flex items-center space-x-2 text-gray-400 cursor-not-allowed">
-              <div className="p-2 rounded-full">
-                <ArrowUpTrayIcon className="w-5 h-5" />
-              </div>
-            </button>
-          </div>
+                <div className="relative">
+                    <HeartIcon
+                        className="w-[22px] h-[22px] cursor-pointer hover:text-red-600 transition"
+                    />
+                    <span className="absolute text-xs top-1 -right-3">0</span>
+                </div>
+
+                <div className="relative">
+                    <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed opacity-50" />
+                </div>
+
+                <div className="relative">
+                    <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed opacity-50" />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  )
+    )
+}
+
+// using it rn as world func
+export function PostHeader({ name, username, timestamp, avatar, text, replyTo }) {
+    
+    return (
+        <div className="flex p-3 space-x-5">
+            <Image
+                src={avatar || "/assets/prof_pic.png"}
+                width={44}
+                height={44}
+                alt="user-pic"
+                className="w-11 h-11 rounded-full object-cover z-10 bg-white"
+            />
+
+            <div className="text-[15px] flex flex-col space-y-1.5 min-w-0"> {/* min-w-0 fix overflow */} 
+                <div className="flex space-x-1.5 text-[#707E89]">
+                    <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis 
+          max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
+                        {name}
+                    </span>
+                    <span className="inline-block whitespace-nowrap overflow-hidden text-ellipsis 
+          max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
+                        @{username}
+                    </span>
+
+                    {timestamp && (
+                        <>
+                            <span>⋅</span>
+                            <span>{timeAgo(timestamp)}</span> {/* this is my timestamp.toDate() equivalent in the video */}
+                        </>
+                    )}
+                </div>
+
+                <p className="mt-1 text-[15px] leading-6 wrap-break-word text-gray-900">
+                    {text}
+                </p>
+
+                {replyTo && (
+                    <span className="text-[15px] text-[#707E89]">
+                        Replying to <span className="text-[#33beff]">@{replyTo}</span>
+                    </span>
+                )}
+            </div>
+        </div>
+    )
 }

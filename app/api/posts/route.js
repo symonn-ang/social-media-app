@@ -11,7 +11,7 @@ export async function GET() {
       ORDER BY p.created_at DESC
       LIMIT 50
     `)
-    // ^^^ this where initial code was from video and will also serve as post logic now
+    // ^^^ this where initial code was from and will also serve as post logic now
 
     return Response.json(rows)
   } catch (err) {
