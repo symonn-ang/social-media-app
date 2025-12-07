@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useDispatch, useSelector } from 'react-redux';
 import { closeCommentModal } from '@/redux/slices/modalSlice';
 
-export default function PostInput({ onPostSuccess, insideModal }) {
+export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess }) {
   const [text, setText] = useState("")
   const [loading, setLoading] = useState(false)
 
