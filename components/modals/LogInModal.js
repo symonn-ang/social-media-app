@@ -98,7 +98,7 @@ export default function LogInModal() {
                         <div className="flex flex-col items-center">
 
                             <button
-                                onClick={handleLogIn}
+                                onClick={() => handleLogIn()}
                                 disabled={loading}
                                 className="w-full h-12 bg-[#ff3377] text-white rounded-full font-bold hover:bg-[#e02a6a] 
                                 transition disabled:opacity-50 cursor-pointer"

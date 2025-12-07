@@ -10,7 +10,7 @@ export default function SideBarUserInfo() {
     const user = useSelector((state) => state.user)
     const name = user.name || "Guest User"
     const username = user.username || "guest"
-    const avatar = user.avatar || "/assets/ic_profile.png"
+    const avatar = user.avatar || "/assets/prof_pic.png"
 
     function handleLogout() {
         localStorage.clear()
@@ -19,9 +19,9 @@ export default function SideBarUserInfo() {
 
     return (
         <div className="relative mt-auto w-full">
-            {/* Your original clickable row — untouched */}
+            {/* initial style */}
             <div
-                className='absolute bottom-2 flex items-center xl:w-50
+                className='absolute bottom-2 flex items-center justify-start w-fit xl:w-60
                         space-x-2 xl:p-3 xl:pe-6 cursor-pointer hover:bg-gray-500/10
                         rounded-full transition'
 
@@ -34,13 +34,13 @@ export default function SideBarUserInfo() {
                     alt='userPic'
                     className='w-9 h-9 rounded-full object-cover'
                 />
-                <div className='hidden xl:flex flex-col text-sm'>
-                    <span className='font-bold'>{name}</span>
-                    <span className='text-gray-500'>@{username}</span>
+                <div className='hidden xl:flex flex-col text-sm max-w-40'>
+                    <span className='whitespace-nowrap text-ellipsis overflow-hidden font-bold'>{name}</span> {/*  overflows */}
+                    <span className='whitespace-nowrap text-ellipsis overflow-hidden text-gray-500'>@{username}</span>
                 </div>
             </div>
 
-            {/* Clean pop-out menu — now perfectly aligned */}
+            {/* Clean pop-out menu aligned sidebar divs */}
             {showMenu && (
                 <>
                     {/* Backdrop */}
@@ -59,7 +59,7 @@ export default function SideBarUserInfo() {
                         <button
                             onClick={handleLogout}
                             className="w-full text-left px-6 py-4 text-black hover:bg-gray-500/10 transition font-medium text-sm
-                            cursor-pointer
+                            cursor-pointer truncate
                             "
                         >
                             Log out @{username}
