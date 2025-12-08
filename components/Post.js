@@ -1,86 +1,113 @@
-"use client" // for moment check later if not needed
+"use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-    ChatBubbleOvalLeftEllipsisIcon,
-    HeartIcon,
-    ChartBarIcon,
-    ArrowUpTrayIcon
-} from '@heroicons/react/24/outline'
-import { timeAgo } from '@/utils/timeAgo'
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon, ChartBarIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { timeAgo } from "@/utils/timeAgo";
 import { useDispatch, useSelector } from "react-redux";
-import { openCommentModal, setCommentDetails } from "@/redux/slices/modalSlice";
+import { openCommentModal, openLogInModal, setCommentDetails } from "@/redux/slices/modalSlice";
 import Link from "next/link";
 
 export default function Post({ data }) {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
-    const { id, name, username, content, created_at, avatar } = data // access db, iz const so careful
+  const { id, name, username, content, created_at, avatar, likes = 0, comments = 0 } = data;
 
-    return (
-        <div className="border-b border-gray-200 hover:bg-gray-50 transition">
+  const [likesCount, setLikesCount] = useState(likes);
+  const [commentsCount, setCommentsCount] = useState(comments);
+  const [isLiked, setIsLiked] = useState(false);
 
-            <Link href={'/' + id}
-                onClick={() => {
-                    dispatch(setCommentDetails({
-                        name: name,
-                        username: username,
-                        id: id,
-                        text: content,
-                    }))
+  // Check if liked
+  useEffect(() => {
+    if (!user?.uid) return;
 
-                }}>
-                <PostHeader
-                    name={name}
-                    username={username}
-                    timestamp={created_at}
-                    avatar={avatar}
-                    text={content}
+    async function check() {
+      const res = await fetch(`/api/likes/check?post_id=${id}&user_id=${user.uid}`);
+      const { liked } = await res.json();
+      setIsLiked(liked);
+    }
+    check();
+  }, [id, user?.uid]);
 
-                />
-            </Link>
+  async function toggleLike() {
+    if (!user?.uid) {
+      dispatch(openLogInModal());
+      return;
+    }
 
-            <div className="ml-16 p-3 flex space-x-14">
-                <div className="relative">
-                    <ChatBubbleOvalLeftEllipsisIcon
-                        className="w-[22px] h-[22px] cursor-pointer hover:text-[#33beff] transition"
-                        onClick={() => {
-                            dispatch(setCommentDetails({
-                                name: name,
-                                username: username,
-                                id: id,
-                                text: content,
-                            }))
-                            dispatch(openCommentModal())
+    const wasLiked = isLiked;
+    setIsLiked(!wasLiked);
+    setLikesCount(prev => wasLiked ? prev - 1 : prev + 1);
 
-                        }}
-                    />
-                    <span className="absolute text-xs top-1 -right-3">0</span>
-                </div>
+    try {
+      await fetch("/api/likes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: id, user_id: user.uid }),
+      });
+    } catch (err) {
+      setIsLiked(wasLiked);
+      setLikesCount(prev => wasLiked ? prev + 1 : prev - 1);
+    }
+  }
 
-                <div className="relative">
-                    <HeartIcon
-                        className="w-[22px] h-[22px] cursor-pointer hover:text-red-600 transition"
-                    />
-                    <span className="absolute text-xs top-1 -right-3">0</span>
-                </div>
+  return (
+    <div className="border-b border-gray-200 hover:bg-gray-50 transition">
+      <Link href={`/${id}`} onClick={() => dispatch(setCommentDetails({ name, username, id, text: content }))}>
+        <PostHeader name={name} username={username} timestamp={created_at} avatar={avatar} text={content} />
+      </Link>
 
-                <div className="relative">
-                    <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed opacity-50" />
-                </div>
-
-                <div className="relative">
-                    <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed opacity-50" />
-                </div>
-            </div>
+      <div className="ml-16 p-3 flex space-x-14">
+        {/* COMMENTS */}
+        <div className="relative">
+          <ChatBubbleOvalLeftEllipsisIcon
+            className="w-[22px] h-[22px] cursor-pointer hover:text-[#33beff] transition"
+            onClick={() => {
+              if (!user?.uid) dispatch(openLogInModal());
+              else {
+                dispatch(setCommentDetails({ name, username, id, text: content }));
+                dispatch(openCommentModal());
+              }
+            }}
+          />
+          {commentsCount > 0 && (
+            <span className="absolute text-xs top-1 -right-3">{commentsCount}</span>
+          )}
         </div>
-    )
+
+        {/* LIKES */}
+        <div className="relative">
+          {isLiked ? (
+            <HeartSolidIcon
+              className="w-[22px] h-[22px] cursor-pointer text-pink-500 hover:text-red-600 transition"
+              onClick={toggleLike}
+            />
+          ) : (
+            <HeartIcon
+              className="w-[22px] h-[22px] cursor-pointer hover:text-pink-500 transition"
+              onClick={toggleLike}
+            />
+          )}
+          {likesCount > 0 && (
+            <span className="absolute text-xs top-1 -right-3">{likesCount}</span>
+          )}
+        </div>
+
+        <div className="relative">
+          <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed opacity-50" />
+        </div>
+        <div className="relative">
+          <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed opacity-50" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-// using it rn as world func
+// Post Header
 export function PostHeader({ name, username, timestamp, avatar, text, replyTo }) {
-
     return (
         <div className="flex p-3 space-x-5">
             <Image
@@ -91,28 +118,24 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
                 className="w-11 h-11 rounded-full object-cover z-10 bg-white"
             />
 
-            <div className="text-[15px] flex flex-col space-y-1.5 min-w-0"> {/* min-w-0 fix overflow */}
+            <div className="text-[15px] flex flex-col space-y-1.5 min-w-0">
                 <div className="flex space-x-1.5 text-[#707E89]">
-                    <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis 
-          max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
+                    <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
                         {name}
                     </span>
-                    <span className="inline-block whitespace-nowrap overflow-hidden text-ellipsis 
-          max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
+                    <span className="inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
                         @{username}
                     </span>
 
                     {timestamp && (
                         <>
                             <span>⋅</span>
-                            <span>{timeAgo(timestamp)}</span> {/* this is my timestamp.toDate() equivalent in the video */}
+                            <span>{timeAgo(timestamp)}</span>
                         </>
                     )}
                 </div>
 
-                <p className="mt-1 text-[15px] leading-6 wrap-break-word text-gray-900">
-                    {text}
-                </p>
+                <p className="mt-1 text-[15px] leading-6 wrap-break-word text-gray-900">{text}</p>
 
                 {replyTo && (
                     <span className="text-[15px] text-[#707E89]">
@@ -121,5 +144,5 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
                 )}
             </div>
         </div>
-    )
+    );
 }
