@@ -1,4 +1,3 @@
-// app/api/auth/register/route.js
 import pool from '@/lib/db'
 import bcrypt from 'bcryptjs'
 
@@ -6,7 +5,7 @@ export async function POST(request) {
     try {
         const { name, email, password } = await request.json()
 
-        // Basic validation
+        
         if (!name || !email || !password) {
             return Response.json(
                 { error: "Name, email and password are required" },
@@ -34,7 +33,7 @@ export async function POST(request) {
             [name.trim(), username.trim(), email.toLowerCase().trim(), hashedPassword]
         )
 
-        // Success!
+        
         return Response.json(
             {
                 success: true,

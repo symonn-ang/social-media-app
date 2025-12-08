@@ -25,7 +25,7 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user": JSON.stringify(user)  // ← send user info to backend
+          "x-user": JSON.stringify(user)  // send user info to backend
         },
         body: JSON.stringify({ text: text.trim() })
       })

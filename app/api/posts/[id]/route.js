@@ -1,7 +1,7 @@
 import pool from "@/lib/db"
 
 export async function GET(req, context) {
-  // Await params because App Router now uses a Promise
+  // when in trouble just await params
   const params = await context.params
   const id = params?.id
 

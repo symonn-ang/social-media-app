@@ -1,4 +1,3 @@
-// app/api/comments/[postId]/route.js
 import pool from "@/lib/db"
 
 export async function GET(req, context) {

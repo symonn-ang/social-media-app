@@ -40,12 +40,12 @@ export default function SignUpModal() {
 
             if (data.success) {
                 alert(`Welcome ${name}! Account created`)
-                // THIS IS YOUR NEW "onAuthStateChanged"
+                // onAuthStateChanged equiv
                 dispatch(signInUser({
                     name: name.trim(),
-                    username: data.user.username,    // or let user choose later
+                    username: data.user.username,
                     email: email.toLowerCase(),
-                    uid: data.user.id                  // our own MySQL user ID
+                    uid: data.user.id 
                 }))
                 dispatch(closeSignUpModal())
                 // Later: save user to Redux + localStorage, the one up here
@@ -98,7 +98,7 @@ export default function SignUpModal() {
     //     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
     //         if (!currentUser) return
 
-    //         // Handle Redux Actions
+    //      // more redux stuff
     //         dispatch(signInUser(
     //             {
     //                 name: "",

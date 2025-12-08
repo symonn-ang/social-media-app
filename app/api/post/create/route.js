@@ -1,4 +1,3 @@
-// app/api/posts/create/route.js
 import pool from '@/lib/db'
 
 export async function POST(request) {

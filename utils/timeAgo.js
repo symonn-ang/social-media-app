@@ -1,4 +1,3 @@
-
 export function timeAgo(dateString) {
   const now = new Date()
   const past = new Date(dateString)

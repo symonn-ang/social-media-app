@@ -22,15 +22,15 @@ export default function Post({ data }) {
         <div className="border-b border-gray-200 hover:bg-gray-50 transition">
 
             <Link href={'/' + id}
-            onClick={() => {
-                            dispatch(setCommentDetails({
-                                name: name,
-                                username: username,
-                                id: id,
-                                text: content,
-                            }))
+                onClick={() => {
+                    dispatch(setCommentDetails({
+                        name: name,
+                        username: username,
+                        id: id,
+                        text: content,
+                    }))
 
-                        }}> 
+                }}>
                 <PostHeader
                     name={name}
                     username={username}
@@ -80,7 +80,7 @@ export default function Post({ data }) {
 
 // using it rn as world func
 export function PostHeader({ name, username, timestamp, avatar, text, replyTo }) {
-    
+
     return (
         <div className="flex p-3 space-x-5">
             <Image
@@ -91,7 +91,7 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
                 className="w-11 h-11 rounded-full object-cover z-10 bg-white"
             />
 
-            <div className="text-[15px] flex flex-col space-y-1.5 min-w-0"> {/* min-w-0 fix overflow */} 
+            <div className="text-[15px] flex flex-col space-y-1.5 min-w-0"> {/* min-w-0 fix overflow */}
                 <div className="flex space-x-1.5 text-[#707E89]">
                     <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis 
           max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">

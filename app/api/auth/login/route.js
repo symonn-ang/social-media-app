@@ -1,4 +1,3 @@
-// app/api/auth/login/route.js
 import pool from '@/lib/db'
 import bcrypt from 'bcryptjs'
 
