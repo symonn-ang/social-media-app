@@ -21,7 +21,16 @@ export default function Post({ data }) {
     return (
         <div className="border-b border-gray-200 hover:bg-gray-50 transition">
 
-            <Link href={'/' + id}> 
+            <Link href={'/' + id}
+            onClick={() => {
+                            dispatch(setCommentDetails({
+                                name: name,
+                                username: username,
+                                id: id,
+                                text: content,
+                            }))
+
+                        }}> 
                 <PostHeader
                     name={name}
                     username={username}

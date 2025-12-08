@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
+import { useDispatch } from "react-redux"
+import { setCommentDetails } from "@/redux/slices/modalSlice"
+
 import { PostHeader } from "@/components/Post"
 import Sidebar from "@/components/Sidebar"
 import Widgets from "@/components/Widgets"
 import SignUpPrompt from "@/components/SignUpPrompt"
+
 import {
   ArrowLeftIcon,
   ArrowUpTrayIcon,
@@ -21,11 +25,13 @@ import PostInput from "@/components/PostInput"
 export default function PostPage() {
   const pathname = usePathname()
   const id = pathname?.split("/").pop()
+  const dispatch = useDispatch()
 
   const [post, setPost] = useState(null)
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // fetch comments
   const fetchComments = async () => {
     try {
       const res = await fetch(`/api/comments/${id}`)
@@ -44,13 +50,21 @@ export default function PostPage() {
         const res = await fetch(`/api/posts/${id}`)
         const data = await res.json()
         setPost(data)
+
+        dispatch(setCommentDetails({
+          name: data.name,
+          username: data.username,
+          id: data.id,
+          text: data.content,
+        }))
+
       } catch (err) {
         console.error(err)
       }
     }
 
     Promise.all([fetchPost(), fetchComments()]).finally(() => setLoading(false))
-  }, [id])
+  }, [id, dispatch])
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
   if (!post) return <p className="text-center mt-10 text-red-500">Post not found.</p>
@@ -88,7 +102,7 @@ export default function PostPage() {
               <EllipsisHorizontalIcon className="w-5 h-5" />
             </div>
 
-            <span className="text-[15px] mt-4">{post.content}</span>
+            <span className="text-[15px] mt-4 wrap-break-word whitespace-normal">{post.content}</span>
           </div>
 
           {/* Likes Placeholder */}
@@ -104,7 +118,7 @@ export default function PostPage() {
             <ArrowUpTrayIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed pr-2" />
           </div>
 
-          {/* Comment Input */}
+          {/* input stuff */}
           <PostInput insideModal={true} onCommentSuccess={fetchComments} />
 
           {/* Comments */}
@@ -131,12 +145,10 @@ export default function PostPage() {
   )
 }
 
-// ----------------------------
-// Comment Component
-// ----------------------------
+// comment func
 function Comment({ name, username, text, avatar }) {
   return (
-    <div className="border-b border-gray-100">
+    <div className="border-b border-gray-100 wrap-break-word whitespace-normal">
       <PostHeader
         name={name}
         username={username}
