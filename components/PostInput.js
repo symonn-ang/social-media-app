@@ -11,16 +11,19 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
   const [loading, setLoading] = useState(false)
 
   const user = useSelector((state) => state.user)
-  const isGuest = !user?.uid || user.email === "guest@example.com"
+  const isGuest = user.email === "guest@example.com"
   const commentDetails = useSelector((state) => state.modals.commentPostDetails)
   const dispatch = useDispatch()
 
   async function sendPost() {
     if (!text.trim()) return;
     if (loading) return;
+    if (!user?.uid) {
+      dispatch(openLogInModal());
+      return;
+    }
     if (isGuest) {
       alert("Please log in to post!");
-      dispatch(openLogInModal());
       return;
     }
 
@@ -57,9 +60,12 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
   async function sendComment() {
     if (!text.trim()) return;
     if (loading) return;
+    if (!user?.uid) {
+      dispatch(openLogInModal());
+      return;
+    }
     if (isGuest) {
       alert("Please log in to comment!");
-      dispatch(openLogInModal());
       return;
     }
 

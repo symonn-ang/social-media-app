@@ -65,9 +65,10 @@ export default function Post({ data }) {
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer hover:text-[#33beff] transition"
             onClick={() => {
-              if (!user?.uid || isGuest) {
-                alert("Please log in to comment!");
+              if (!user?.uid) {
                 dispatch(openLogInModal());
+              } else if (isGuest){
+                alert("Please log in to comment!");
               }
               else {
                 dispatch(setCommentDetails({ name, username, id, text: text }));
