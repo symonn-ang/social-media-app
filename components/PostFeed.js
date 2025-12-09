@@ -1,23 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux"; // ADD THIS
+import { useDispatch, useSelector } from "react-redux";
 import PostInput from "./PostInput";
 import Post from "./Post";
+import { closeLoadingScreen } from "@/redux/slices/loadingSlice";
 
 export default function PostFeed() {
-  const user = useSelector((state) => state.user); // ADD THIS
+  const user = useSelector((state) => state.user);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const dispatch = useDispatch()
   async function loadPosts() {
     try {
       const userHeader = user?.uid ? JSON.stringify(user) : "";
 
       const res = await fetch("/api/posts", {
         headers: {
-          "x-user": userHeader, // THIS IS THE FINAL FIX
+          "x-user": userHeader,
         },
       });
       console.log("SENDING x-user HEADER:", userHeader);
@@ -38,10 +39,11 @@ export default function PostFeed() {
     loadPosts();
     const interval = setInterval(loadPosts, 10000);
     return () => clearInterval(interval);
-  }, [user]); // Add user dependency so it refreshes on login
+  }, [user]); // user dependency so it refreshes on login
 
   useEffect(() => {
     window.refreshPosts = loadPosts;
+    dispatch(closeLoadingScreen()) 
   }, []);
 
   return (

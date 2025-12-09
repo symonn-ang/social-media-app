@@ -4,19 +4,25 @@ import React, { useState } from 'react';
 import { PhotoIcon, ChartBarIcon, FaceSmileIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import Image from "next/image";
 import { useDispatch, useSelector } from 'react-redux';
-import { closeCommentModal } from '@/redux/slices/modalSlice';
+import { closeCommentModal, openLogInModal } from '@/redux/slices/modalSlice';
 
 export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess }) {
   const [text, setText] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const user = useSelector((state) => state.user)  
+  const user = useSelector((state) => state.user)
   const isGuest = !user?.uid || user.email === "guest@example.com"
   const commentDetails = useSelector((state) => state.modals.commentPostDetails)
   const dispatch = useDispatch()
 
   async function sendPost() {
-    if (!text.trim() || loading || isGuest) return
+    if (!text.trim()) return;
+    if (loading) return;
+    if (isGuest) {
+      alert("Please log in to post!");
+      dispatch(openLogInModal());
+      return;
+    }
 
     setLoading(true)
 
@@ -32,7 +38,7 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
 
       if (res.ok) {
         setText("")
-        
+
         if (onPostSuccess) onPostSuccess()
         else if (typeof window.refreshPosts === "function") {
           window.refreshPosts()
@@ -48,39 +54,45 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
     }
   }
 
-async function sendComment() {
-  if (!text.trim() || loading || isGuest) return
-
-  setLoading(true)
-
-  try {
-    const res = await fetch(`/api/comments/${commentDetails.id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-user": JSON.stringify({         // so apparently the problem was here, fixed now for comments logic
-          id: user.uid,
-          name: user.name,
-          username: user.username
-        })
-      },
-      body: JSON.stringify({ text: text.trim() })
-    })
-
-    if (res.ok) {
-      setText('')
-      dispatch(closeCommentModal())
-      if (typeof onCommentSuccess === "function") onCommentSuccess() // refresh comments
-    } else {
-      alert("Failed to comment")
+  async function sendComment() {
+    if (!text.trim()) return;
+    if (loading) return;
+    if (isGuest) {
+      alert("Please log in to comment!");
+      dispatch(openLogInModal());
+      return;
     }
-  } catch (err) {
-    console.error(err)
-    alert("Network error")
-  } finally {
-    setLoading(false)
+
+    setLoading(true)
+
+    try {
+      const res = await fetch(`/api/comments/${commentDetails.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-user": JSON.stringify({         // so apparently the problem was here, fixed now for comments logic
+            id: user.uid,
+            name: user.name,
+            username: user.username
+          })
+        },
+        body: JSON.stringify({ text: text.trim() })
+      })
+
+      if (res.ok) {
+        setText('')
+        dispatch(closeCommentModal())
+        if (typeof onCommentSuccess === "function") onCommentSuccess() // refresh comments
+      } else {
+        alert("Failed to comment")
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Network error")
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
 
   return (

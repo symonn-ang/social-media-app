@@ -48,11 +48,10 @@ export async function GET(request) {
       ...post,
       likes: likesMap[post.id] || 0,
       comments: commentsMap[post.id] || 0,
-      userLiked: !!userLikedMap[post.id]  // THIS TELLS Post.js if heart should be red
+      userLiked: !!userLikedMap[post.id]  // check if red
     }));
 
-    console.log("USER HEADER:", userHeader);
-console.log("CURRENT USER ID:", currentUserId);
+
 
     return Response.json(formattedPosts);
   } catch (err) {

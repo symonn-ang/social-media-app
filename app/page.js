@@ -6,6 +6,9 @@ import SignUpPrompt from '@/components/SignUpPrompt';
 
 import Image from "next/image";
 import CommentModal from '@/components/modals/CommentModal';
+import LoadingScreen from '@/components/modals/LoadingScreen';
+
+// color scheme #ff3377
 
 export default function Home() {
   return (
@@ -22,6 +25,7 @@ export default function Home() {
 
       <CommentModal />
       <SignUpPrompt />
+      <LoadingScreen />
 
 
     </>
