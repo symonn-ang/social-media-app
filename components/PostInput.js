@@ -89,6 +89,7 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
         setText('')
         dispatch(closeCommentModal())
         if (typeof onCommentSuccess === "function") onCommentSuccess() // refresh comments
+        window.dispatchEvent(new CustomEvent("commentAdded", { detail: commentDetails.id })); // tell that useeffect guy in post to refresh count
       } else {
         alert("Failed to comment")
       }

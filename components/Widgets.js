@@ -53,7 +53,7 @@ export default function Widgets() {
                 </div>
             </div>
 
-            <div className="bg-[#EFF3F4] rounded-xl p-3">
+            <div className="sticky top-0 z-10 bg-[#EFF3F4] rounded-xl p-3">
                 <h1 className="text-xl font-bold mb-2">
                     Who to Follow?
                 </h1>

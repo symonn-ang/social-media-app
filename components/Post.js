@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
-import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon, ChartBarIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon, ChartBarIcon, ArrowUpTrayIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { timeAgo } from "@/utils/timeAgo";
 import { useDispatch, useSelector } from "react-redux";
 import { openCommentModal, openLogInModal, setCommentDetails } from "@/redux/slices/modalSlice";
@@ -53,6 +53,16 @@ export default function Post({ data }) {
     }
   }
 
+  useEffect(() => {  // for commentCount
+    const handleComment = (e) => {
+      if (e.detail === id) {
+        setCommentsCount(prev => prev + 1);
+      }
+    };
+    window.addEventListener("commentAdded", handleComment);
+    return () => window.removeEventListener("commentAdded", handleComment);
+  }, [id]);
+
   return (
     <div className="border-b border-gray-200 hover:bg-gray-50 transition">
       <Link href={`/${id}`} onClick={() => dispatch(setCommentDetails({ name, username, id, text: text }))}>
@@ -67,7 +77,7 @@ export default function Post({ data }) {
             onClick={() => {
               if (!user?.uid) {
                 dispatch(openLogInModal());
-              } else if (isGuest){
+              } else if (isGuest) {
                 alert("Please log in to comment!");
               }
               else {
@@ -141,9 +151,20 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
           {timestamp && (
             <>
               <span>⋅</span>
-              <span>{timeAgo(timestamp)}</span>
+              <span className="pr-90">{timeAgo(timestamp)}</span>
             </>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // found this instead of z indexing
+              e.preventDefault();
+              alert("Options coming soon!");
+            }}
+            className="ml-2"
+          >
+            <EllipsisHorizontalIcon className="w-5 cursor-pointer z-50" />
+          </button>
+
         </div>
 
         <p className="mt-1 text-[15px] leading-6 wrap-break-word text-gray-900">{text}</p>
