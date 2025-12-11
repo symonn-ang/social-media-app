@@ -60,7 +60,7 @@ export default function Post({ data }) {
       </Link>
 
       <div className="ml-16 p-3 flex space-x-14">
-        {/* COMMENTS */}
+        {/* comments */}
         <div className="relative">
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer hover:text-[#33beff] transition"
@@ -81,7 +81,7 @@ export default function Post({ data }) {
           )}
         </div>
 
-        {/* LIKES */}
+        {/* likes */}
         <div className="relative">
           {isLiked ? (
             <HeartSolidIcon
@@ -117,7 +117,7 @@ export default function Post({ data }) {
   );
 }
 
-// Post Header
+// use alot
 export function PostHeader({ name, username, timestamp, avatar, text, replyTo }) {
   return (
     <div className="flex p-3 space-x-5">

@@ -43,7 +43,7 @@ export default function PostFeed() {
 
   useEffect(() => {
     window.refreshPosts = loadPosts;
-    dispatch(closeLoadingScreen()) 
+    dispatch(closeLoadingScreen())
   }, []);
 
   return (
@@ -64,7 +64,12 @@ export default function PostFeed() {
           <p className="p-10 text-center text-gray-500">No posts yet. Be the first!</p>
         )}
         {posts.map((post) => (
-          <Post key={post.id} data={post} id={post.id} />
+          <Post
+            key={post.id}
+            data={post}
+            id={post.id}
+
+          />
         ))}
       </div>
     </div>

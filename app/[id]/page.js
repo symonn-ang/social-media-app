@@ -75,7 +75,7 @@ export default function PostPage() {
         <Sidebar />
 
         <div className="grow border-x border-gray-400 max-w-2xl">
-          {/* Top Bar */}
+
           <div className="py-4 px-3 text-lg sm:text-xl sticky top-0 z-50 bg-white/80 backdrop-blur-sm font-bold border-b border-gray-200 flex items-center">
             <Link href="/">
               <ArrowLeftIcon className="w-5 h-5 mr-10" />
@@ -105,12 +105,11 @@ export default function PostPage() {
             <span className="text-[15px] mt-4 wrap-break-word whitespace-normal">{post.content}</span>
           </div>
 
-          {/* Likes Placeholder */}
+          {/* Likes */}
           <div className="border-b border-gray-100 p-3 text-[15px]">
-            <span className="font-bold">{post.likes ?? 0}</span> Likes
+            <span className="font-bold">{post.likes || 0}</span> {post.likes === 1 ? 'Like' : 'Likes'}
           </div>
 
-          {/* Action Buttons */}
           <div className="border-b border-gray-100 p-3 px-10 text-[15px] flex justify-between">
             <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
             <HeartIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
@@ -121,7 +120,6 @@ export default function PostPage() {
           {/* input stuff */}
           <PostInput insideModal={true} onCommentSuccess={fetchComments} />
 
-          {/* Comments */}
           {comments.length === 0 && (
             <p className="text-center py-5 text-gray-400">No comments yet</p>
           )}
@@ -133,6 +131,7 @@ export default function PostPage() {
               username={comment.username}
               text={comment.text}
               avatar={comment.avatar}
+              timestamp={comment.created_at}
             />
           ))}
         </div>
@@ -146,7 +145,7 @@ export default function PostPage() {
 }
 
 // comment func
-function Comment({ name, username, text, avatar }) {
+function Comment({ name, username, text, avatar, timestamp }) {
   return (
     <div className="border-b border-gray-100 wrap-break-word whitespace-normal">
       <PostHeader
@@ -154,6 +153,7 @@ function Comment({ name, username, text, avatar }) {
         username={username}
         text={text}
         avatar={avatar}
+        timestamp={timestamp}
       />
       <div className="flex space-x-12 p-3 justify-evenly">
         <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />

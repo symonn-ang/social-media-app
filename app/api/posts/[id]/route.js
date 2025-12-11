@@ -28,7 +28,24 @@ export async function GET(req, context) {
       return Response.json({ error: "Post not found" }, { status: 404 })
     }
 
-    return Response.json(rows[0])
+    const post = rows[0];
+
+    // likes count
+    const [likesRows] = await pool.execute(
+      "SELECT COUNT(*) as likes FROM likes WHERE post_id = ?",
+      [id]
+    );
+    post.likes = likesRows[0]?.likes || 0;
+
+    // comments counts , incase
+    const [commentsRows] = await pool.execute(
+      "SELECT COUNT(*) as comments FROM comments WHERE post_id = ?",
+      [id]
+    );
+    post.comments = commentsRows[0]?.comments || 0;
+
+    return Response.json(post);
+
   } catch (err) {
     console.error("POST SQL ERROR:", err)
     return Response.json({ error: "Server error" }, { status: 500 })
