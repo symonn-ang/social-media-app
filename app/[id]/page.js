@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { setCommentDetails } from "@/redux/slices/modalSlice"
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 
 import { PostHeader } from "@/components/Post"
 import Sidebar from "@/components/Sidebar"
@@ -22,7 +23,7 @@ import Image from "next/image"
 import Link from "next/link"
 import PostInput from "@/components/PostInput"
 
-export default function PostPage() {
+export default function PostPage(data) {
   const pathname = usePathname()
   const id = pathname?.split("/").pop()
   const dispatch = useDispatch()
@@ -30,6 +31,47 @@ export default function PostPage() {
   const [post, setPost] = useState(null)
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const user = useSelector((state) => state.user);
+  const { likesid, likes = 0 } = data;
+  const isGuest = user.email === "guest@example.com"
+  const [likesCount, setLikesCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    if (!post || !user?.uid) return;
+
+    setLikesCount(post.likes || 0);
+
+    async function check() {
+      const res = await fetch(`/api/likes/check?post_id=${post.id}&user_id=${user.uid}`);
+      const { liked } = await res.json();
+      setIsLiked(liked);
+    }
+    check();
+  }, [post, user?.uid]);
+
+  async function toggleLike() {
+    if (!user?.uid || isGuest) {
+      alert("Please log in to like posts!");
+      return;
+    }
+
+    const wasLiked = isLiked;
+    setIsLiked(!wasLiked);
+    setLikesCount(prev => wasLiked ? prev - 1 : prev + 1);
+
+    try {
+      await fetch("/api/likes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: post.id, user_id: user.uid }),
+      });
+    } catch (err) {
+      setIsLiked(wasLiked);
+      setLikesCount(prev => wasLiked ? prev + 1 : prev - 1);
+    }
+  }
 
   // fetch comments
   const fetchComments = async () => {
@@ -107,12 +149,25 @@ export default function PostPage() {
 
           {/* Likes */}
           <div className="border-b border-gray-100 p-3 text-[15px]">
-            <span className="font-bold">{post.likes || 0}</span> {post.likes === 1 ? 'Like' : 'Likes'}
+            <span className="font-bold">{likesCount || 0}</span> {likesCount === 1 ? 'Like' : 'Likes'}
           </div>
 
           <div className="border-b border-gray-100 p-3 px-10 text-[15px] flex justify-between">
             <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
-            <HeartIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
+            {/* start of likes btn */}
+            <div className="relative">
+              {isLiked ? (
+                <HeartSolidIcon
+                  className="w-[22px] h-[22px] cursor-pointer text-pink-500 hover:text-red-600 transition"
+                  onClick={toggleLike}
+                />
+              ) : (
+                <HeartIcon
+                  className="w-[22px] h-[22px] cursor-pointer hover:text-pink-500 transition"
+                  onClick={toggleLike}
+                />
+              )}
+            </div>
             <ChartBarIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
             <ArrowUpTrayIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed pr-2" />
           </div>

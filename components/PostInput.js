@@ -105,7 +105,7 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
   return (
     <div className="flex space-x-5 p-3 border-b border-gray-200">
       <Image
-        src={user?.avatar || insideModal ? "/assets/prof_pic.png" : "/assets/prof_pic.png"}
+        src={user?.avatar || insideModal ? user.avatar : "/assets/prof_pic.png"}
         width={44}
         height={44}
         alt={insideModal ? "Profile Picture" : "Other"} // Check later

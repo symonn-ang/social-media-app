@@ -40,7 +40,8 @@ export default function LogInModal() {
                     name: data.user.name,
                     username: data.user.username,
                     email: data.user.email,
-                    uid: data.user.id
+                    uid: data.user.id,
+                    avatar: data.user.avatar
                 }))
                 dispatch(closeLogInModal())
             } else {

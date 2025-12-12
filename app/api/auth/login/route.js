@@ -10,7 +10,7 @@ export async function POST(request) {
     }
 
     const [rows] = await pool.execute(
-      "SELECT id, name, username, email, password FROM users WHERE email = ?",
+      "SELECT id, name, username, email, password, avatar FROM users WHERE email = ?",
       [email.toLowerCase().trim()]
     )
 
@@ -32,7 +32,8 @@ export async function POST(request) {
         id: user.id,
         name: user.name,
         username: user.username,
-        email: user.email
+        email: user.email,
+        avatar: user.avatar || "/assets/prof_pic.png"
       }
     })
 

@@ -1,13 +1,44 @@
 "use client"
 
 import Image from "next/image"
-import React, { useState } from "react"
-import { useSelector } from "react-redux"
+import React, { useState, useRef } from "react"
+import { useDispatch, useSelector } from "react-redux";
+import { updateAvatar } from "@/redux/slices/userSlice";
 
 export default function SideBarUserInfo() {
-    const [showMenu, setShowMenu] = useState(false)
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
+    const fileInputRef = useRef(null);
 
-    const user = useSelector((state) => state.user)
+    const [showMenu, setShowMenu] = useState(false)
+    const handleFileSelect = () => {
+        fileInputRef.current.click(); // trigger file explorer
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        const res = await fetch("/api/users/avatar", {
+            method: "POST",
+            headers: {
+                "x-user": JSON.stringify(user),
+            },
+            body: formData,
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            dispatch(updateAvatar(data.avatar));
+            alert("Avatar updated!");
+        } else {
+            alert(data.error || "Failed to upload");
+        }
+    };
+
     const name = user.name || "Guest User"
     const username = user.username || "guest"
     const avatar = user.avatar || "/assets/prof_pic.png"
@@ -43,18 +74,18 @@ export default function SideBarUserInfo() {
             {/* Clean pop-out menu aligned sidebar divs */}
             {showMenu && (
                 <>
-                    
+
                     <div
                         className="fixed inset-0 z-40"
                         onClick={() => setShowMenu(false)}
                     />
 
                     {/* Menu */}
-                    <div className="absolute bottom-16 left-4 right-4 xl:left-[-10] xl:right-4 xl:w-50 bg-white border border-gray-800 
+                    <div className="absolute bottom-18 left-4 right-4 xl:left-[-10] xl:right-4 xl:w-50 bg-white border border-gray-800 
           rounded-xl shadow-2xl z-50 overflow-hidden
           
           ">
-                       
+
                         {/* Logout button */}
                         <button
                             onClick={handleLogout}
@@ -64,6 +95,22 @@ export default function SideBarUserInfo() {
                         >
                             Log out @{username}
                         </button>
+                        <button
+                            onClick={handleFileSelect}
+                            className="w-full text-left px-6 py-4 text-black hover:bg-gray-500/10 transition font-medium text-sm
+                            cursor-pointer truncate
+                            "
+                        >
+                            Change Profile Picture
+                        </button>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            name="avatar"
+                            style={{ display: "none" }}
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                        />
                     </div>
                 </>
             )}
