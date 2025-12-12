@@ -51,3 +51,51 @@ export async function GET(req, context) {
     return Response.json({ error: "Server error" }, { status: 500 })
   }
 }
+
+// delete starts here
+export async function DELETE(req, context) {
+  const params = await context.params;
+  const postId = params?.id;
+
+  if (!postId) {
+    return Response.json({ error: "Missing post ID" }, { status: 400 });
+  }
+
+  // Get current user from header
+  const userHeader = req.headers.get("x-user");
+  const currentUser = userHeader ? JSON.parse(userHeader) : null;
+
+  if (!currentUser?.uid) {
+    return Response.json({ error: "Not logged in" }, { status: 401 });
+  }
+
+  try {
+    // Get the post to check owner
+    const [rows] = await pool.execute(
+      "SELECT user_id FROM posts WHERE id = ? LIMIT 1",
+      [postId]
+    );
+
+    if (rows.length === 0) {
+      return Response.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    const postOwner = rows[0].user_id;
+
+    if (postOwner !== currentUser.uid) {
+      return Response.json({ error: "You cannot delete someone else's post" }, { status: 403 });
+    }
+
+    // Delete likes + comments first (foreign keys)
+    await pool.execute("DELETE FROM likes WHERE post_id = ?", [postId]);
+    await pool.execute("DELETE FROM comments WHERE post_id = ?", [postId]);
+
+    await pool.execute("DELETE FROM posts WHERE id = ?", [postId]);
+
+    return Response.json({ success: true });
+
+  } catch (err) {
+    console.error("DELETE ERROR:", err);
+    return Response.json({ error: "Failed to delete post" }, { status: 500 });
+  }
+}

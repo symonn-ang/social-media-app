@@ -7,7 +7,7 @@ export async function GET(request) {
 
   try {
     const [posts] = await pool.execute(`
-      SELECT p.id, p.content AS text, p.created_at,
+      SELECT p.id, p.user_id, p.content AS text, p.created_at,
              u.name, u.username, u.avatar
       FROM posts p
       JOIN users u ON p.user_id = u.id

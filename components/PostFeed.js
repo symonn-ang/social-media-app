@@ -46,6 +46,17 @@ export default function PostFeed() {
     dispatch(closeLoadingScreen())
   }, []);
 
+  useEffect(() => {
+    function handleDelete(e) {
+      const deletedId = e.detail;
+      setPosts((prev) => prev.filter((p) => p.id !== deletedId));
+    }
+
+    window.addEventListener("postDeleted", handleDelete);
+    return () => window.removeEventListener("postDeleted", handleDelete);
+  }, []);
+
+
   return (
     <div className="grow border-x border-gray-400 max-w-2xl">
 

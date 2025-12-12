@@ -66,7 +66,7 @@ export default function Post({ data }) {
   return (
     <div className="border-b border-gray-200 hover:bg-gray-50 transition">
       <Link href={`/${id}`} onClick={() => dispatch(setCommentDetails({ name, username, id, text: text }))}>
-        <PostHeader name={name} username={username} timestamp={created_at} avatar={avatar} text={text} />
+        <PostHeader id={id} user_id={data.user_id} name={name} username={username} timestamp={created_at} avatar={avatar} text={text} />
       </Link>
 
       <div className="ml-16 p-3 flex space-x-14">
@@ -128,7 +128,21 @@ export default function Post({ data }) {
 }
 
 // use alot
-export function PostHeader({ name, username, timestamp, avatar, text, replyTo }) {
+export function PostHeader({ id, user_id, name, username, timestamp, avatar, text, replyTo }) {
+  const [openMenu, setOpenMenu] = React.useState(false);
+  const menuRef = React.useRef(null);
+  const currentUser = useSelector((state) => state.user);
+
+  React.useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="flex p-3 space-x-5">
       <Image
@@ -140,7 +154,7 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
       />
 
       <div className="text-[15px] flex flex-col space-y-1.5 min-w-0">
-        <div className="flex space-x-1.5 text-[#707E89]">
+        <div className="flex space-x-1.5 text-[#707E89] relative">
           <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
             {name}
           </span>
@@ -154,16 +168,54 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
               <span className="pr-90">{timeAgo(timestamp)}</span>
             </>
           )}
+
           <button
             onClick={(e) => {
               e.stopPropagation(); // found this instead of z indexing
               e.preventDefault();
-              alert("Options coming soon!");
+              setOpenMenu((prev) => !prev);
             }}
-            className="ml-2"
+            className="ml-2 relative cursor-pointer rounded-full hover:bg-gray-200 transition"
           >
-            <EllipsisHorizontalIcon className="w-5 cursor-pointer z-50" />
+            <EllipsisHorizontalIcon className="w-5" />
           </button>
+          {openMenu && currentUser?.uid === user_id && (
+            <div
+              ref={menuRef}
+              className="absolute right-0 top-7 xl:w-33 bg-white border border-gray-800 
+            rounded-xl shadow-2xl z-50 overflow-hidden"
+            >
+              <button
+                className="w-full text-left px-6 py-4 text-black hover:bg-gray-500/10 transition font-medium text-sm
+                            cursor-pointer truncate"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpenMenu(false);
+
+                  const res = await fetch(`/api/posts/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "x-user": JSON.stringify(currentUser), // check
+                    },
+                  });
+
+                  if (res.ok) {
+                    // for feed so that guy can refresh
+                    const event = new CustomEvent("postDeleted", { detail: id });
+                    window.dispatchEvent(event);
+                  } else {
+                    console.error("Failed to delete post");
+                  }
+
+                }}
+              >
+                Delete Post
+              </button>
+
+            </div>
+          )}
 
         </div>
 
@@ -175,6 +227,6 @@ export function PostHeader({ name, username, timestamp, avatar, text, replyTo })
           </span>
         )}
       </div>
-    </div>
+    </div >
   );
 }

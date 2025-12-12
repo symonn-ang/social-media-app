@@ -99,7 +99,7 @@ export default function PostPage() {
                   <span className="text-[#707E89] truncate max-w-[140px] sm:max-w-40">@{post.username}</span>
                 </div>
               </div>
-              <EllipsisHorizontalIcon className="w-5 h-5" />
+              {/* <EllipsisHorizontalIcon className="w-5 h-5" /> */}
             </div>
 
             <span className="text-[15px] mt-4 wrap-break-word whitespace-normal">{post.content}</span>
