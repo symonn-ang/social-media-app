@@ -128,7 +128,7 @@ export default function Post({ data }) {
 }
 
 // use alot
-export function PostHeader({ id, user_id, name, username, timestamp, avatar, text, replyTo }) {
+export function PostHeader({ id, user_id, name, username, timestamp, avatar, text, replyTo, isComment = false }) {
   const [openMenu, setOpenMenu] = React.useState(false);
   const menuRef = React.useRef(null);
   const currentUser = useSelector((state) => state.user);
@@ -154,7 +154,7 @@ export function PostHeader({ id, user_id, name, username, timestamp, avatar, tex
       />
 
       {/* w - full the goat */}
-      <div className="text-[15px] flex flex-col space-y-1.5 min-w-0 w-full"> 
+      <div className="text-[15px] flex flex-col space-y-1.5 min-w-0 w-full">
         <div className="flex space-x-1.5 text-[#707E89] relative">
           <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
             {name}
@@ -178,7 +178,9 @@ export function PostHeader({ id, user_id, name, username, timestamp, avatar, tex
             }}
             className="ml-auto relative cursor-pointer rounded-full hover:bg-gray-200 transition"
           >
-            <EllipsisHorizontalIcon className="w-5" />
+            {!isComment && (
+              <EllipsisHorizontalIcon className="w-5" />
+            )}
           </button>
           {openMenu && currentUser?.uid === user_id && (
             <div
