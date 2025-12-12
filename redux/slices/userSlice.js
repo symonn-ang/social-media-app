@@ -4,6 +4,7 @@ const initialState = {
   name: "",
   username: "",
   email: "",
+  id: "",  
   uid: "",
   avatar: ""
 }
@@ -16,6 +17,7 @@ const userSlice = createSlice({
       state.name = action.payload.name
       state.username = action.payload.username
       state.email = action.payload.email
+      state.id = action.payload.id 
       state.uid = action.payload.uid
       state.avatar = action.payload.avatar
     }, // comma aight

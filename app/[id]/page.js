@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { useDispatch, useSelector } from "react-redux"
 import { setCommentDetails } from "@/redux/slices/modalSlice"
@@ -78,6 +78,7 @@ export default function PostPage(data) {
     try {
       const res = await fetch(`/api/comments/${id}`)
       const data = await res.json()
+      console.log("Fetched comments:", data)  // for debug
       setComments(data)
     } catch (err) {
       console.error(err)
@@ -107,6 +108,16 @@ export default function PostPage(data) {
 
     Promise.all([fetchPost(), fetchComments()]).finally(() => setLoading(false))
   }, [id, dispatch])
+
+  useEffect(() => {
+    function handleDelete(e) {
+      const deletedId = e.detail;
+      setComments((prev) => prev.filter((c) => c.id !== deletedId));
+    }
+
+    window.addEventListener("commentDeleted", handleDelete);
+    return () => window.removeEventListener("commentDeleted", handleDelete);
+  }, []);
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
   if (!post) return <p className="text-center mt-10 text-red-500">Post not found.</p>
@@ -182,6 +193,8 @@ export default function PostPage(data) {
           {comments.map((comment) => (
             <Comment
               key={comment.id}
+              id={comment.id}
+              userId={comment.username}
               name={comment.name}
               username={comment.username}
               text={comment.text}
@@ -200,16 +213,89 @@ export default function PostPage(data) {
 }
 
 // comment func
-function Comment({ name, username, text, avatar, timestamp }) {
+function Comment({ id, userId, name, username, text, avatar, timestamp }) {
+  const [openMenu, setOpenMenu] = useState(false);
+  const menuRef = useRef(null);
+  const user = useSelector((state) => state.user);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  async function deleteComment() {
+    if (!user?.uid) return alert("Not logged in");
+
+    const res = await fetch(`/api/comment/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user": JSON.stringify(user), // send the full Redux user object
+      },
+    });
+
+    if (res.ok) {
+      const event = new CustomEvent("commentDeleted", { detail: id });
+      window.dispatchEvent(event);
+    } else {
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        data = { error: "Failed to delete comment (no JSON returned)" };
+      }
+      alert(data.error || "Failed to delete comment");
+    }
+
+    setOpenMenu(false);
+  }
+
+const isOwner = user?.username === userId;
+console.log("Current user uid:", user?.uid, "Comment userId:", userId, "isOwner:", isOwner);
+
+
   return (
-    <div className="border-b border-gray-100 wrap-break-word whitespace-normal">
-      <PostHeader
-        name={name}
-        username={username}
-        text={text}
-        avatar={avatar}
-        timestamp={timestamp}
-      />
+    <div className="border-b border-gray-100 wrap-break-word whitespace-normal relative">
+      <div className="flex justify-between items-start">
+        <PostHeader
+          name={name}
+          username={username}
+          text={text}
+          avatar={avatar}
+          timestamp={timestamp}
+          isComment={true}
+        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenMenu((prev) => !prev);
+          }}
+          className="relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition mr-3 mt-2"
+        >
+          <EllipsisHorizontalIcon className="w-5 h-5 cursor-pointer" />
+        </button>
+
+        {/* Dropdown */}
+        {isOwner && openMenu && (
+          <div
+            ref={menuRef}
+            className="absolute right-3 top-10 bg-white border border-gray-300 rounded-xl shadow-xl z-50 w-40 overflow-hidden"
+          >
+            <button
+              className="w-full text-left px-4 py-3 text-black hover:bg-gray-100 transition text-sm font-medium cursor-pointer"
+              onClick={deleteComment}
+            >
+              Delete Comment
+            </button>
+          </div>
+        )}
+      </div>
       <div className="flex space-x-12 p-3 justify-evenly">
         <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />
         <HeartIcon className="w-[22px] h-[22px] cursor-not-allowed" />
