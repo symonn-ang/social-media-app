@@ -81,7 +81,7 @@ export default function Post({ data }) {
                 alert("Please log in to comment!");
               }
               else {
-                dispatch(setCommentDetails({ name, username, id, text: text }));
+                dispatch(setCommentDetails({ name, username, id, text: text, avatar }));
                 dispatch(openCommentModal());
               }
             }}

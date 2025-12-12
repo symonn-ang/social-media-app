@@ -86,15 +86,6 @@ export default function SideBarUserInfo() {
           
           ">
 
-                        {/* Logout button */}
-                        <button
-                            onClick={handleLogout}
-                            className="w-full text-left px-6 py-4 text-black hover:bg-gray-500/10 transition font-medium text-sm
-                            cursor-pointer truncate
-                            "
-                        >
-                            Log out @{username}
-                        </button>
                         <button
                             onClick={handleFileSelect}
                             className="w-full text-left px-6 py-4 text-black hover:bg-gray-500/10 transition font-medium text-sm
@@ -111,6 +102,15 @@ export default function SideBarUserInfo() {
                             ref={fileInputRef}
                             onChange={handleFileChange}
                         />
+                            {/* logout btn starts hre */}
+                            <button
+                                onClick={handleLogout}
+                                className="w-full text-left px-6 py-4 text-black hover:bg-gray-500/10 transition font-medium text-sm
+                                cursor-pointer truncate
+                                "
+                            >
+                                Log out @{username}
+                            </button>
                     </div>
                 </>
             )}

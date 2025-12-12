@@ -134,7 +134,7 @@ export default function PostPage(data) {
                   width={44}
                   height={44}
                   alt="Profile Picture"
-                  className="w-11 h-11 rounded-full"
+                  className="w-11 h-11 rounded-full object-cover z-10 bg-white"
                 />
                 <div className="flex flex-col text-[15px]">
                   <span className="font-bold truncate max-w-[140px] sm:max-w-40">{post.name}</span>

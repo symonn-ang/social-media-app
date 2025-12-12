@@ -1,4 +1,3 @@
-// app/api/users/avatar/route.js
 import pool from "@/lib/db";
 import fs from "fs";
 import path from "path";

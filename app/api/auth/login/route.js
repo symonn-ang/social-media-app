@@ -25,7 +25,7 @@ export async function POST(request) {
       return Response.json({ error: "Invalid email or password" }, { status: 401 })
     }
 
-    // SUCCESS
+    // success
     return Response.json({
       success: true,
       user: {
