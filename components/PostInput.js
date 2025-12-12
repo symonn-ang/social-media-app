@@ -129,10 +129,10 @@ export default function PostInput({ onPostSuccess, insideModal, onCommentSuccess
         <div className="flex justify-between pt-5 border-t border-gray-100">
           <div className="flex space-x-1.5">
             <PhotoIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-pointer opacity-50" />
-            <ChartBarIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-pointer opacity-50" />
-            <FaceSmileIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-pointer opacity-50" />
-            <CalendarIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-pointer opacity-50" />
-            <MapPinIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-pointer opacity-50" />
+            <ChartBarIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-not-allowed opacity-50" />
+            <FaceSmileIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-not-allowed opacity-50" />
+            <CalendarIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-not-allowed opacity-50" />
+            <MapPinIcon className="w-[22px] h-[22px] text-[#ff3377] cursor-not-allowed opacity-50" />
           </div>
 
           <button

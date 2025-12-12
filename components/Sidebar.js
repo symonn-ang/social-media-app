@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react'
 import {
     HomeIcon,
@@ -34,8 +36,10 @@ export default function Sidebar() {
                     <SidebarLink Icon={UserIcon} text="Profile" />
                     <SidebarLink Icon={EllipsisHorizontalCircleIcon} text="More" />
                     <button className='hidden xl:block bg-[#ff3377] w-[200px] h-[52px]
-                    rounded-full text-white font-medium cursor-pointer shadow-2xl mt-2'>
-                        Button
+                    rounded-full text-white font-medium cursor-pointer shadow-2xl mt-2'
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    >
+                        Post
                     </button>
                 </ul>
 

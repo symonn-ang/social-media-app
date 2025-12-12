@@ -153,7 +153,8 @@ export function PostHeader({ id, user_id, name, username, timestamp, avatar, tex
         className="w-11 h-11 rounded-full object-cover z-10 bg-white"
       />
 
-      <div className="text-[15px] flex flex-col space-y-1.5 min-w-0">
+      {/* w - full the goat */}
+      <div className="text-[15px] flex flex-col space-y-1.5 min-w-0 w-full"> 
         <div className="flex space-x-1.5 text-[#707E89] relative">
           <span className="font-bold text-black inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px] sm:max-w-40">
             {name}
@@ -165,7 +166,7 @@ export function PostHeader({ id, user_id, name, username, timestamp, avatar, tex
           {timestamp && (
             <>
               <span>⋅</span>
-              <span className="pr-90">{timeAgo(timestamp)}</span>
+              <span>{timeAgo(timestamp)}</span>
             </>
           )}
 
@@ -175,7 +176,7 @@ export function PostHeader({ id, user_id, name, username, timestamp, avatar, tex
               e.preventDefault();
               setOpenMenu((prev) => !prev);
             }}
-            className="ml-2 relative cursor-pointer rounded-full hover:bg-gray-200 transition"
+            className="ml-auto relative cursor-pointer rounded-full hover:bg-gray-200 transition"
           >
             <EllipsisHorizontalIcon className="w-5" />
           </button>
