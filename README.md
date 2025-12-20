@@ -5,18 +5,18 @@ a Twitter-inspired micro-social app, let people speak freely and connect without
 
 packages: 
 
-heroicons - for icons
-materialui (mui) - for modals
-redux - for global states
-mysql2
-bycryptjs
+- heroicons - for icons
+- materialui (mui) - for modals
+- redux - for global states
+- mysql2
+- bycryptjs
 
 techstack: 
 
-jsx
-node.js
-next.js
-mysql
+- jsx
+- node.js
+- next.js
+- mysql
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
